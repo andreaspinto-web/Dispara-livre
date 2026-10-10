@@ -67,9 +67,9 @@
       map=Leaflet.map('map',{zoomControl:false,scrollWheelZoom:false,zoomSnap:.5}).setView(start,13);
       satellite.addTo(map);
       Leaflet.control.zoom({position:'bottomright'}).addTo(map);
-      layers.hunt=Leaflet.polygon(huntRing.map(([lng,lat])=>[lat,lng]),{color:'#347345',weight:2,fillColor:'#69a96d',fillOpacity:.32}).addTo(map);
-      layers.park=Leaflet.polygon(parkRing.map(([lng,lat])=>[lat,lng]),{color:'#cc8c27',weight:2,fillColor:'#edb744',fillOpacity:.31}).addTo(map);
-      layers.sensitive=Leaflet.layerGroup(sensitivePlaces.map(place=>Leaflet.circle([place.center[1],place.center[0]],{radius:place.radius,color:'#c94e43',weight:1.5,fillColor:'#e66d5e',fillOpacity:.34}))).addTo(map);
+      layers.hunt=Leaflet.polygon(huntRing.map(([lng,lat])=>[lat,lng]),{color:'#347345',weight:2,fillColor:'#69a96d',fillOpacity:.13}).addTo(map);
+      layers.park=Leaflet.polygon(parkRing.map(([lng,lat])=>[lat,lng]),{color:'#cc8c27',weight:2,fillColor:'#edb744',fillOpacity:.12}).addTo(map);
+      layers.sensitive=Leaflet.layerGroup(sensitivePlaces.map(place=>Leaflet.circle([place.center[1],place.center[0]],{radius:place.radius,color:'#c94e43',weight:1.5,fillColor:'#e66d5e',fillOpacity:.13}))).addTo(map);
       layers.boundaries=Leaflet.layerGroup(boundaryLines.map(coords=>Leaflet.polyline(coords,{color:'#777e75',weight:1,dashArray:'4 5',opacity:.65}))).addTo(map);
       layers.buffer=Leaflet.layerGroup().addTo(map);
       map.on('click',event=>{
@@ -149,8 +149,14 @@
       layers.buffer.clearLayers();
       marker=window.L.marker([latlng.lat,latlng.lng],{icon:window.L.divIcon({className:'',html:'<span class="map-pin"></span>',iconSize:[30,38],iconAnchor:[15,37]})}).addTo(map);
       // Halo mantém a borda legível sobre telhados e campos; o preenchimento laranja deixa a área a verificar evidente sem tapar a imagem.
-      window.L.circle([latlng.lat,latlng.lng],{radius:250,color:'#fff8ee',weight:8,opacity:.9,fill:false,interactive:false}).addTo(layers.buffer);
-      bufferCircle=window.L.circle([latlng.lat,latlng.lng],{radius:250,color:'#bf493d',weight:3,dashArray:'10 6',fillColor:'#ef8b42',fillOpacity:.24,interactive:false}).addTo(layers.buffer);
+      window.L.circle([latlng.lat,latlng.lng],{radius:250,color:'#fff8ee',weight:6,opacity:.9,fill:false,interactive:false}).addTo(layers.buffer);
+      bufferCircle=window.L.circle([latlng.lat,latlng.lng],{radius:250,color:'#bf493d',weight:3,dashArray:'9 6',fillColor:'#ef8b42',fillOpacity:.09,interactive:false}).addTo(layers.buffer);
+      // Etiqueta acompanha o raio geográfico, sem bloquear gestos no mapa.
+      const northOffset=250/111320;
+      window.L.marker([latlng.lat+northOffset,latlng.lng],{
+        interactive:false,
+        icon:window.L.divIcon({className:'distance-label-wrap',html:'<span class="distance-label">250 m</span>',iconSize:[62,26],iconAnchor:[31,13]})
+      }).addTo(layers.buffer);
     }
     drawFallbackSelection(latlng);
     document.getElementById('location-help').textContent=source==='gps'?'Localização do telemóvel · podes escolher outro ponto no mapa':'Ponto alternativo escolhido · podes tocar noutro local';
@@ -240,5 +246,23 @@
   function openReport(){document.getElementById('report-text').textContent=reportContent();document.getElementById('report-dialog').showModal();}
   function printReport(){document.getElementById('report-dialog').close();document.body.classList.add('printing-report');setTimeout(()=>{window.print();document.body.classList.remove('printing-report');},100);}
   async function copyReport(){const button=document.getElementById('copy-report');try{await navigator.clipboard.writeText(reportContent());button.textContent='Resumo copiado';}catch{button.textContent='Não foi possível copiar';}setTimeout(()=>button.textContent='Copiar resumo',1800);}
-  document.addEventListener('DOMContentLoaded',initMap);
+  function initMobileSheet(){
+    const sheet=document.querySelector('.analysis-card'),toggle=document.getElementById('sheet-toggle');
+    if(!sheet||!toggle)return;
+    const setExpanded=expanded=>{
+      sheet.classList.toggle('sheet-expanded',expanded);
+      toggle.setAttribute('aria-expanded',String(expanded));
+      toggle.setAttribute('aria-label',expanded?'Recolher análise':'Expandir análise');
+      if(map){map.invalidateSize();setTimeout(()=>map&&map.invalidateSize(),280);}
+    };
+    toggle.addEventListener('click',()=>setExpanded(!sheet.classList.contains('sheet-expanded')));
+    sheet.querySelector('.card-topline')?.addEventListener('click',event=>{
+      if(event.target.closest('button'))return;
+      if(window.matchMedia('(max-width:759px)').matches)setExpanded(!sheet.classList.contains('sheet-expanded'));
+    });
+    if(window.matchMedia('(max-width:759px)').matches){
+      document.getElementById('location-button-label').textContent='Localizar-me';
+    }
+  }
+  document.addEventListener('DOMContentLoaded',()=>{initMap();initMobileSheet();});
 })();
