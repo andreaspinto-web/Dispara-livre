@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f7f2">
+  <meta name="description" content="Caça Aqui — demonstração visual de zonas de caça e condicionantes na Serra de Montejunto.">
+  <title>Caça Aqui · Zonas de Caça Seguras</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://tile.openstreetmap.org">
+  <link rel="preconnect" href="https://server.arcgisonline.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Caça Aqui, início">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 25 13 9l4 8 3-5 7 13H5Z"/><path d="M10 25h15"/></svg></span>
+        <span><strong>Caça Aqui</strong><small>Zonas de Caça Seguras</small></span>
+      </a>
+      <div class="demo-pill status-gray" id="zone-status-pill" aria-label="Serra de Montejunto · escolha um ponto para analisar"><span class="status-dot" aria-hidden="true"></span><span id="zone-status-name">Serra de Montejunto</span></div>
+    </header>
+
+    <section class="map-wrap" aria-label="Mapa interativo da Serra de Montejunto">
+      <svg id="map-fallback" class="map-fallback" viewBox="0 0 1000 700" preserveAspectRatio="none" role="img" aria-label="Mapa esquemático da Serra de Montejunto">
+        <defs>
+          <pattern id="field-pattern" width="54" height="48" patternUnits="userSpaceOnUse"><path d="M0 14 54 7M4 38 42 48" stroke="#c9d5bf" stroke-width="1" opacity=".38"/></pattern>
+          <pattern id="forest-pattern" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M5 18 11 5l6 13Z" fill="#729674" opacity=".35"/></pattern>
+          <linearGradient id="hill-shade" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#bdcda9"/><stop offset="1" stop-color="#e1e8d8"/></linearGradient>
+          <filter id="label-shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#fff" flood-opacity=".9"/></filter>
+        </defs>
+        <rect width="1000" height="700" fill="#e9eee4"/>
+        <path d="M0 0h1000v700H0Z" fill="url(#field-pattern)"/>
+        <path d="M108 49q160-82 311 10t260 22q134-29 286 68v174q-190-32-301 14t-248-4q-144-49-308 4Z" fill="#dce8d5" opacity=".8"/>
+        <path d="M20 270q127-115 249-32t218 61q108-31 183-12t193 55v226q-140-81-245-22t-222 3q-167-68-376 41Z" fill="#d4e2ce" opacity=".74"/>
+        <path d="M211 158q70-110 176-74t125 128q-68 99-166 83t-135-137Z" fill="url(#hill-shade)" stroke="#b5c8a9" stroke-width="2"/>
+        <path d="M211 158q70-110 176-74t125 128q-68 99-166 83t-135-137Z" fill="url(#forest-pattern)" opacity=".8"/>
+        <g fill="none" stroke="#a9bf9e" stroke-width="1.4" opacity=".9">
+          <path d="M185 187q85-127 191-88t119 115q-70 94-161 69t-149-96Z"/><path d="M209 190q72-101 161-69t96 94q-54 73-136 57t-121-82Z"/><path d="M235 193q56-73 128-48t72 73q-47 48-102 40t-98-65Z"/><path d="M257 193q38-49 88-30t47 49q-37 30-74 22t-61-41Z"/>
+          <path d="M585 413q54-54 105-31t46 73q-44 48-94 37t-57-79Z"/><path d="M608 415q36-34 69-22t28 42q-28 26-60 19t-37-39Z"/>
+          <path d="M80 549q38-26 83-2t42 56q-45 20-78 2t-47-56Z"/><path d="M99 550q27-14 52 0t24 35q-27 12-49 0t-27-35Z"/>
+        </g>
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M61 0q20 88 66 142t74 111q48 91 118 127t143 51q78 19 126 66t125 46q62 1 128 51" stroke="#fff" stroke-width="13"/><path d="M61 0q20 88 66 142t74 111q48 91 118 127t143 51q78 19 126 66t125 46q62 1 128 51" stroke="#dd8d51" stroke-width="5"/>
+          <path d="M773 0q-36 93-8 186t4 160q-31 84 28 151t41 203" stroke="#fff" stroke-width="12"/><path d="M773 0q-36 93-8 186t4 160q-31 84 28 151t41 203" stroke="#d96b63" stroke-width="4"/>
+          <path d="M0 507q102-26 183-80t134-81q76-40 146-29t134 37q108 39 222-2t181-18" stroke="#fff" stroke-width="10"/><path d="M0 507q102-26 183-80t134-81q76-40 146-29t134 37q108 39 222-2t181-18" stroke="#e0ad70" stroke-width="3.5"/>
+          <path d="M344 0q-25 104 31 160t75 128q11 70-53 130t-77 128q-16 81 18 154" stroke="#fafaf6" stroke-width="4"/><path d="M344 0q-25 104 31 160t75 128q11 70-53 130t-77 128q-16 81 18 154" stroke="#c4ad83" stroke-width="1.5"/>
+          <path d="M0 212q113 13 172 54t103 83q48 47 97 58" stroke="#b2cdd0" stroke-width="3"/><path d="M846 0q-18 113-89 168t-85 97" stroke="#b2cdd0" stroke-width="3"/>
+        </g>
+        <g fill="#c9dbc3" opacity=".85"><path d="M724 91q43-60 91-38t29 78q-42 27-84 13t-36-53Z"/><path d="M24 603q73-49 132-16t34 83q-68 36-119 7t-47-74Z"/><path d="M840 565q44-50 97-18t18 73q-54 23-91 2t-24-57Z"/></g>
+        <g id="fallback-layers">
+          <g data-layer-view="hunt"><path id="fb-hunt" fill="#66a86d" fill-opacity=".35" stroke="#347345" stroke-width="4" stroke-linejoin="round"/></g>
+          <g data-layer-view="park"><path id="fb-park" fill="#edb744" fill-opacity=".38" stroke="#cc8c27" stroke-width="4" stroke-linejoin="round"/></g>
+          <g data-layer-view="sensitive" id="fb-sensitive"></g>
+          <g data-layer-view="boundaries" fill="none" stroke="#7f877c" stroke-width="2" stroke-dasharray="8 8" opacity=".75"><path d="M100 0q90 148 225 244t180 183q54 75 160 164t202 87"/><path d="M0 322q135-18 265 34t246 1q91-38 208 19t196 14"/></g>
+          <g data-layer-view="buffer" id="fb-buffer"></g>
+        </g>
+        <g id="fallback-places" fill="#465449" font-family="Arial,sans-serif" filter="url(#label-shadow)">
+          <g><circle cx="278" cy="202" r="5" fill="#a97456" stroke="#fff" stroke-width="2"/><text x="290" y="200" font-size="17" font-weight="700">Cadaval</text><text x="290" y="218" font-size="10" fill="#717a70">CADAVAL</text></g>
+          <g><circle cx="236" cy="385" r="4" fill="#a97456" stroke="#fff" stroke-width="2"/><text x="248" y="383" font-size="13" font-weight="600">Vila Verde dos Francos</text></g>
+          <g><circle cx="506" cy="410" r="4" fill="#a97456" stroke="#fff" stroke-width="2"/><text x="518" y="410" font-size="14" font-weight="700">Abrigada</text></g>
+          <g><circle cx="372" cy="385" r="4" fill="#a97456" stroke="#fff" stroke-width="2"/><text x="384" y="385" font-size="13" font-weight="600">Cabanas de Torres</text></g>
+          <g><circle cx="377" cy="512" r="4" fill="#a97456" stroke="#fff" stroke-width="2"/><text x="389" y="512" font-size="13" font-weight="600">Olhalvo</text></g>
+          <g><circle cx="530" cy="623" r="5" fill="#a97456" stroke="#fff" stroke-width="2"/><text x="542" y="624" font-size="17" font-weight="700">Alenquer</text><text x="542" y="641" font-size="10" fill="#717a70">ALENQUER</text></g>
+          <g><circle cx="139" cy="123" r="4" fill="#a97456" stroke="#fff" stroke-width="2"/><text x="151" y="124" font-size="13" font-weight="600">Bombarral</text></g>
+          <text x="247" y="278" font-size="14" font-weight="700" letter-spacing="2" fill="#657c65">SERRA DE MONTEJUNTO</text>
+          <text x="247" y="298" font-size="11" fill="#71816f">Área de paisagem protegida</text>
+          <text x="37" y="669" font-size="10" fill="#6d786d">MAPA ILUSTRATIVO · SERRA DE MONTEJUNTO</text>
+        </g>
+        <g id="fallback-selection" pointer-events="none"></g>
+        <g transform="translate(946 50)" fill="#536454" font-family="Arial,sans-serif" text-anchor="middle"><path d="M0 0 12 33 0 26 -12 33Z" fill="#536454"/><text y="-8" font-size="13" font-weight="700">N</text></g>
+      </svg>
+      <div id="map" role="application" aria-label="Toque no mapa para analisar um ponto"></div>
+      <div class="map-heading"><span class="eyebrow">ZONA-PILOTO</span><strong>Serra de Montejunto</strong><span>Cadaval · Alenquer</span></div>
+      <button class="map-action layers-toggle" id="layers-toggle" aria-expanded="false" aria-controls="layer-panel"><span class="icon">☷</span> Camadas <span class="chevron">⌄</span></button>
+      <button class="map-action recenter" id="clear-point" title="Limpar ponto"><span class="icon">↺</span><span class="recenter-label">Limpar ponto</span></button>
+      <div class="map-fallback-badge" id="map-fallback-badge">MAPA ESQUEMÁTICO DE RESERVA</div>
+      <div class="layer-panel" id="layer-panel" hidden>
+        <div class="layer-panel-title">Camadas do mapa <button id="close-layers" aria-label="Fechar camadas">×</button></div>
+        <label class="layer-row"><span class="layer-swatch hunt"></span><span>Zona de caça</span><input type="checkbox" data-layer="hunt" checked><i></i></label>
+        <label class="layer-row"><span class="layer-swatch park"></span><span>Área protegida</span><input type="checkbox" data-layer="park" checked><i></i></label>
+        <label class="layer-row"><span class="layer-swatch sensitive"></span><span>Habitações / sensíveis</span><input type="checkbox" data-layer="sensitive" checked><i></i></label>
+        <label class="layer-row"><span class="layer-swatch buffer"></span><span>Buffer 250 m</span><input type="checkbox" data-layer="buffer" checked><i></i></label>
+        <label class="layer-row"><span class="layer-swatch boundaries"></span><span>Limites simplificados</span><input type="checkbox" data-layer="boundaries" checked><i></i></label>
+        <div class="base-label">MAPA BASE</div>
+        <div class="base-options"><button class="base-option" data-base="street">Mapa</button><button class="base-option active" data-base="satellite">Satélite</button></div>
+        <small class="layer-note">Polígonos ilustrativos, sem valor oficial.</small>
+      </div>
+      <div class="map-credit" id="map-credit">Imagem aérea Esri · Camadas de demonstração</div>
+      <div class="map-bottom-actions" id="map-bottom-actions">
+        <button class="location-button" id="share-location" type="button"><span aria-hidden="true">⌖</span><span id="location-button-label">Partilhar localização</span></button>
+        <span class="location-help" id="location-help">usa o GPS deste telemóvel para analisar este local</span>
+        <span class="location-status" id="location-status" role="status" hidden></span>
+      </div>
+      <button class="manual-point-button" id="manual-point" type="button" title="Adicionar ponto alternativo" aria-label="Adicionar ponto alternativo"><span aria-hidden="true">＋</span></button>
+    </section>
+
+    <section class="analysis-card" aria-live="polite">
+      <div class="card-grabber"><span></span></div>
+      <div class="card-topline"><div><div class="eyebrow">ANÁLISE DO PONTO</div><h1>Posso caçar aqui?</h1></div><button id="export-button" class="export-button" disabled><span>↥</span> Relatório</button></div>
+      <p class="intro" id="intro">Partilha a tua localização para ver as condições deste ponto. Também podes adicionar um ponto alternativo no mapa.</p>
+      <div id="empty-state" class="empty-state"><span class="empty-pin">⌖</span><span>Toca em “Partilhar localização” para começar</span></div>
+      <div id="result" hidden>
+        <div class="verdict" id="verdict"><span class="verdict-icon" id="verdict-icon"></span><div><span class="verdict-label" id="verdict-label"></span><strong id="verdict-text"></strong><small id="verdict-subtext"></small></div></div>
+        <div class="details-grid">
+          <div class="detail-item"><span>Zona de caça</span><strong id="detail-hunt"></strong></div>
+          <div class="detail-item"><span>Tipo</span><strong id="detail-type"></strong></div>
+          <div class="detail-item"><span>Área protegida</span><strong id="detail-park"></strong></div>
+          <div class="detail-item"><span>Zona sensível</span><strong id="detail-sensitive"></strong></div>
+          <div class="detail-item"><span>Zona a verificar · 250 m</span><strong id="detail-buffer"></strong></div>
+          <div class="detail-item"><span>Raio analisado</span><strong>250 m</strong></div>
+        </div>
+        <div class="coordinates"><span>⌖</span><span id="coordinates"></span><span class="coord-note">coordenadas aproximadas</span></div>
+        <div class="source-row"><span class="source-dot"></span> Fonte: camadas simuladas para demonstração</div>
+        <p class="buffer-explainer"><span aria-hidden="true">●</span> Área laranja: raio visual de 250 m. Verifica casas e outras zonas sensíveis que apareçam dentro do círculo; a imagem não é classificada automaticamente.</p>
+      </div>
+      <div class="legal-note"><span class="legal-icon">i</span><p>Esta ferramenta é uma ajuda visual baseada em camadas disponíveis. Não substitui a legislação, a sinalização no terreno, o calendário venatório nem a confirmação junto das entidades competentes.</p></div>
+    </section>
+  </main>
+
+  <dialog id="report-dialog" class="report-dialog"><form method="dialog"><button class="dialog-close" aria-label="Fechar">×</button><span class="eyebrow">CAÇA AQUI · RELATÓRIO</span><h2>Resumo da análise</h2><pre id="report-text"></pre><button class="copy-button" id="print-report" type="button">Imprimir relatório com mapa</button><button class="copy-button secondary-copy" id="copy-report" type="button">Copiar resumo</button><p class="report-footnote">A área laranja/vermelha é uma referência visual de 250 m. Confirme casas e limites diretamente na imagem e no terreno.</p></form></dialog>
+  <noscript><p class="noscript">Esta demonstração precisa de JavaScript e de ligação à internet para carregar o mapa.</p></noscript>
+</body>
+</html>
