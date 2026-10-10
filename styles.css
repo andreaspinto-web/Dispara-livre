@@ -11,3 +11,36 @@
 .layer-swatch.buffer{background:#ef8b42;border:2px solid #bf493d;outline:1px solid #fff;border-radius:50%}.secondary-copy{margin-top:8px;background:#edf2eb;color:#315d40}
 @media print{ @page{size:A4 portrait;margin:12mm} body.printing-report{min-width:0;min-height:0;background:#fff;color:#20271f;-webkit-print-color-adjust:exact;print-color-adjust:exact}body.printing-report .app-shell{width:100%;max-width:none;height:auto;min-height:0;overflow:visible;background:#fff}body.printing-report .topbar{height:auto;flex:0 0 auto;padding:0 0 8mm;border:0}body.printing-report .map-wrap{height:125mm;min-height:125mm;flex:none;overflow:hidden;border:1px solid #d7ddd3;border-radius:8px;break-inside:avoid}body.printing-report .map-heading{top:10px;left:10px}body.printing-report .map-action,body.printing-report .map-bottom-actions,body.printing-report .manual-point-button,body.printing-report .map-fallback-badge,body.printing-report .layer-panel,body.printing-report .card-grabber,body.printing-report .card-topline button,body.printing-report .intro{display:none!important}body.printing-report .map-credit{display:block!important}body.printing-report .analysis-card{max-height:none;overflow:visible;padding:7mm 0 0;border-radius:0;box-shadow:none}body.printing-report #result{display:block!important}body.printing-report .details-grid{gap:4mm 8mm}body.printing-report .legal-note{break-inside:avoid}body.printing-report .report-dialog{display:none!important}body.printing-report #map,body.printing-report .leaflet-container{print-color-adjust:exact;-webkit-print-color-adjust:exact}body.printing-report .leaflet-control-zoom{display:none!important}body.printing-report .verdict,body.printing-report .legal-note,body.printing-report .buffer-explainer{print-color-adjust:exact;-webkit-print-color-adjust:exact} }
 .buffer-explainer{margin:8px 0 0;padding:8px 10px;border-left:3px solid #e27a3d;border-radius:0 8px 8px 0;background:#fff5e9;color:#71523a;font-size:9px;line-height:1.45}.buffer-explainer span{color:#d85c47;margin-right:4px}
+/* Dispara-livre — primeira revisão visual, sem alterar a análise geográfica. */
+@media(max-width:759px){
+.app-shell{height:100svh;min-height:0;max-width:none;overflow:hidden}
+.topbar{height:54px;flex:0 0 54px;padding:0 14px}
+.brand-mark{width:31px;height:31px;border-radius:9px}
+.brand strong{font-size:15px}.brand small{font-size:9px}
+.demo-pill{max-width:45%;font-size:8px;padding:6px 9px;overflow:hidden}
+.map-wrap{flex:1 1 auto;min-height:0}
+.map-heading{display:none}
+.map-action{top:12px;right:12px;height:39px;min-width:39px;border-radius:12px;padding:0 10px;box-shadow:0 2px 10px #0002}
+.recenter{top:59px;width:39px;padding:0;justify-content:center}
+.recenter-label{display:none}
+.layer-panel{top:58px;right:12px}
+.map-bottom-actions{left:auto;right:62px;bottom:13px;transform:none;width:auto;max-width:calc(100% - 125px)}
+.location-button{min-height:41px;padding:0 12px;font-size:11px;max-width:100%;border-radius:14px}
+.location-button>span:first-child{width:20px;height:20px;font-size:17px}
+.location-help{display:none}
+.location-status{position:absolute;right:0;bottom:49px;width:240px;max-width:70vw}
+.manual-point-button{left:12px;bottom:13px;width:41px;height:41px}
+.analysis-card{flex:0 0 100px;max-height:none;min-height:0;overflow:hidden;padding:9px 16px max(10px,env(safe-area-inset-bottom));border-radius:20px 20px 0 0;transition:flex-basis .24s ease;box-shadow:0 -4px 18px #00000014}
+.analysis-card.sheet-expanded{flex-basis:min(60svh,540px);overflow-y:auto}
+.card-grabber{display:flex;height:14px;margin:-5px 0 7px;align-items:center}
+.card-grabber button{width:66px;height:24px;display:grid;place-items:center;border:0;background:transparent;padding:0;cursor:pointer;touch-action:manipulation}
+.card-grabber span{display:block;width:36px;height:4px;border-radius:4px;background:#cdd4cd}
+.card-topline h1{font-size:17px}.card-topline .eyebrow{font-size:8px}
+.analysis-card:not(.sheet-expanded) .intro,.analysis-card:not(.sheet-expanded) .empty-state,.analysis-card:not(.sheet-expanded) #result,.analysis-card:not(.sheet-expanded) .legal-note{display:none!important}
+.analysis-card.sheet-expanded .card-grabber span{background:#819b85}
+.leaflet-bottom.leaflet-right{margin-bottom:5px}
+}
+@media(prefers-reduced-motion:reduce){.analysis-card{transition:none}}
+/* Distância identificável sem esconder a ortofoto. */
+.distance-label{background:#fffdf7;color:#873c2d;border:1px solid #c95c3e;border-radius:20px;padding:4px 9px;box-shadow:0 2px 8px #0004;font:800 12px 'DM Sans',sans-serif;white-space:nowrap}
+.distance-label-wrap{background:transparent;border:0}
